@@ -1,0 +1,28 @@
+{
+  "session_id": "anon-demo-001",
+  "mission_id": "M2_SERIES_PARALLEL",
+  "events": [
+    {
+      "event_type": "place",
+      "timestamp_ms": 1000,
+      "payload": {
+        "node": "battery_1"
+      }
+    },
+    {
+      "event_type": "connect",
+      "timestamp_ms": 2500,
+      "payload": {
+        "from": "battery_1",
+        "to": "bulb_1"
+      }
+    },
+    {
+      "event_type": "explain",
+      "timestamp_ms": 8000,
+      "payload": {
+        "text": "전구 두 개를 나란히 연결했어요."
+      }
+    }
+  ]
+}

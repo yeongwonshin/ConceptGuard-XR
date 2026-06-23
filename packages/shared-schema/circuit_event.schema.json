@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ConceptGuard XR Circuit Event",
+  "type": "object",
+  "required": [
+    "session_id",
+    "mission_id",
+    "event_type",
+    "timestamp_ms"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "mission_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "enum": [
+        "grab",
+        "place",
+        "connect",
+        "disconnect",
+        "simulate",
+        "explain",
+        "retry"
+      ]
+    },
+    "timestamp_ms": {
+      "type": "integer"
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

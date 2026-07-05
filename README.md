@@ -2,7 +2,7 @@
 
 **Not an AI that explains misconceptions after the fact, but an AI·XR science tutor that prevents misconceptions before they become reinforced.** When students manipulate circuits in XR space and explain their reasoning, the system analyzes their interaction logs, circuit graph, lightweight circuit simulation, and natural-language explanation together to provide personalized feedback and XR visualizations.
 
-![Detailed Setup](apps/xr-client-unity/README_XR_PROTOTYPE.md)
+[Detailed Setup](apps/xr-client-unity/README_XR_PROTOTYPE.md)
 
 ## Core Value
 

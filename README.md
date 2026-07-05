@@ -1,64 +1,62 @@
 # ConceptGuard XR
 
-**오개념을 설명하는 AI가 아니라, 오개념이 강화되기 전에 막는 AI·XR 과학 튜터**입니다. 학생이 XR 공간에서 회로를 직접 조작하고 자신의 이유를 설명하면, 시스템은 조작 로그·회로 그래프·간이 회로 시뮬레이션·자연어 설명을 함께 분석하여 맞춤형 피드백과 XR 시각화를 제공합니다.
+**Not an AI that explains misconceptions after the fact, but an AI·XR science tutor that prevents misconceptions before they become reinforced.** When students manipulate circuits in XR space and explain their reasoning, the system analyzes their interaction logs, circuit graph, lightweight circuit simulation, and natural-language explanation together to provide personalized feedback and XR visualizations.
 
-이번 버전은 문서형 아이디어가 아니라, **Unity OpenXR 클라이언트와 FastAPI 분석 서버가 연결되는 시제품 구조**를 포함합니다.
+![Detailed Setup](apps/xr-client-unity/README_XR_PROTOTYPE.md)
 
-![상세 구성](apps/xr-client-unity/README_XR_PROTOTYPE.md)
+## Core Value
 
-## 핵심 가치
+- Goes beyond the limits of text-only AI tutors by analyzing students' actual hands-on behavior in XR.
+- Connects abstract concepts such as series/parallel circuits, current conservation, voltage division, and closed-circuit conditions to XR current-flow visualization and component overlays.
+- Instead of giving the answer immediately, it progressively selects hints, confirmation questions, counterexample simulations, and student self-explanation prompts.
+- Can be extended into a teacher dashboard for repeated misconceptions, correction success rates, hint dependency, and risk levels by student.
 
-- 텍스트 답변만 보는 AI 튜터의 한계를 넘어, 학생의 실제 XR 조작 행동까지 분석합니다.
-- 직렬/병렬, 전류 보존, 전압 분배, 닫힌 회로 조건 같은 추상 개념을 XR 전류 흐름과 부품 오버레이로 연결합니다.
-- 정답을 바로 알려주기보다 힌트, 확인 질문, 반례 시뮬레이션, 직접 설명을 단계적으로 선택합니다.
-- 교사는 학생별 반복 오개념, 수정 성공률, 힌트 의존도, 위험도를 대시보드로 확장할 수 있습니다.
+## Currently Implemented Features
 
-## 현재 구현된 기능
+1. **FastAPI Backend**
+   - `POST /analyze`: Analyzes the circuit graph, student explanation, prediction, and manipulation logs
+   - `GET /xr/config`: Provides runtime configuration for the Unity XR client
+   - `POST /sessions/events`: Stores XR interaction events
+   - `GET /sessions/{session_id}/summary`: Summarizes session events
 
-1. **FastAPI 백엔드**
-   - `POST /analyze`: 회로 그래프, 학생 설명, 예측, 조작 로그 분석
-   - `GET /xr/config`: Unity XR 클라이언트 런타임 설정 제공
-   - `POST /sessions/events`: XR 조작 이벤트 저장
-   - `GET /sessions/{session_id}/summary`: 세션 이벤트 요약
+2. **Circuit Analysis Engine**
+   - Detects closed and open circuits
+   - Classifies single-load, series, parallel, and mixed-circuit candidates
+   - Calculates battery voltage, equivalent resistance, total current, and per-component current, voltage, power, and brightness
 
-2. **회로 분석 엔진**
-   - 닫힌 회로/열린 회로 판정
-   - 단일 부하, 직렬, 병렬, 혼합 후보 분류
-   - 배터리 전압, 등가저항, 총전류, 부품별 전류/전압/전력/밝기 계산
+3. **Misconception Risk Analysis**
+   - Open-circuit confusion
+   - Series/parallel confusion
+   - Current-consumption misconception
+   - Voltage/current confusion
+   - Prediction-observation mismatch
 
-3. **오개념 위험도 분석**
-   - 열린 회로 혼동
-   - 직렬/병렬 혼동
-   - 전류 소모 오개념
-   - 전압/전류 혼동
-   - 예측-관찰 불일치
+4. **Unity XR Client Scripts**
+   - `XRComponentNode`: XR component metadata
+   - `XRWireConnection`: Wire connection representation
+   - `XRSocketWireConnector`: Terminal connection using XR Socket interaction
+   - `CircuitGraphBuilder`: Converts the XR scene into an API circuit graph
+   - `ConceptGuardXRApiClient`: Sends analysis requests to the backend
+   - `CurrentFlowVisualizer`: Visualizes current flow with LineRenderer
+   - `MisconceptionCoachPanel`: Displays XR coaching feedback
 
-4. **Unity XR 클라이언트 스크립트**
-   - `XRComponentNode`: XR 부품 메타데이터
-   - `XRWireConnection`: 전선 연결 표현
-   - `XRSocketWireConnector`: XR Socket 기반 단자 연결
-   - `CircuitGraphBuilder`: XR 씬을 API 회로 그래프로 변환
-   - `ConceptGuardXRApiClient`: 백엔드 분석 요청
-   - `CurrentFlowVisualizer`: 전류 흐름 LineRenderer 시각화
-   - `MisconceptionCoachPanel`: XR 코치 피드백 패널
+## Quick Start
 
-## 빠른 실행
-
-### 1. 백엔드 실행
+### 1. Run the Backend
 
 ```bash
 cd infra
 docker compose up --build
 ```
 
-확인:
+Check the server:
 
 ```bash
 curl http://localhost:8000/health
 curl http://localhost:8000/xr/config
 ```
 
-### 2. 분석 API 테스트
+### 2. Test the Analysis API
 
 ```bash
 curl -X POST http://localhost:8000/analyze \
@@ -78,21 +76,20 @@ curl -X POST http://localhost:8000/analyze \
         {"from":"bulb_2","to":"battery_1"}
       ]
     },
-    "learner_explanation":"전류가 첫 번째 전구에서 조금 소모될 것 같아요.",
+    "learner_explanation":"I think the current will be partly consumed by the first bulb.",
     "prediction":{"brightness":"dim","topology":"series"},
     "manipulation_log":[]
   }'
 ```
 
-### 3. Unity XR 시제품 연결
+### 3. Connect the Unity XR Prototype
 
-Unity 2022 LTS 또는 2023 LTS에서 `apps/xr-client-unity` 아래 스크립트를 가져와 씬을 구성합니다.
+Use Unity 2022 LTS or 2023 LTS and import the scripts under `apps/xr-client-unity` to build the scene.
 
-필수 패키지:
+Required packages:
 
 - XR Interaction Toolkit
 - OpenXR Plugin
 - TextMeshPro
 - Input System
-
 

@@ -1,0 +1,23 @@
+{
+  "apiBaseUrl": "http://localhost:8000",
+  "defaultMissionId": "M2_SERIES_PARALLEL",
+  "prototypeTargetDevices": [
+    "Meta Quest 3",
+    "Meta Quest Pro",
+    "Apple Vision Pro via Unity PolySpatial adaptation"
+  ],
+  "xrStack": {
+    "runtime": "OpenXR",
+    "unityPackages": [
+      "XR Interaction Toolkit",
+      "OpenXR Plugin",
+      "TextMeshPro"
+    ],
+    "coreInteractions": [
+      "grab battery/bulb/resistor/switch",
+      "snap terminals into XR sockets",
+      "toggle switch with controller or hand ray",
+      "visualize current flow with pulsing LineRenderer"
+    ]
+  }
+}

@@ -1,22 +1,22 @@
 # Learning Scenarios
 
-## Scenario 1: 닫힌 회로
+## Scenario 1: Closed Circuit
 
-- 목표: 전류가 흐르려면 닫힌 길이 필요하다는 것을 이해한다.
-- 학생 행동: 배터리 한쪽만 전구에 연결한다.
-- 탐지 신호: 회로 그래프가 열린 경로이며, 학생 설명에 “연결했으니 흐른다”가 포함된다.
-- 피드백: 끊긴 지점을 하이라이트하고 “전류가 다시 배터리로 돌아오는 길이 있나요?”라고 질문한다.
+- Goal: Understand that current needs a closed path to flow.
+- Learner action: Connect only one side of the battery to the bulb.
+- Detection signal: The circuit graph has an open path, and the learner explanation says current flows because one connection was made.
+- Feedback: Highlight the break and ask, "Is there a path for current to return to the battery?"
 
-## Scenario 2: 직렬/병렬
+## Scenario 2: Series and Parallel
 
-- 목표: 연결 구조가 전구 밝기에 미치는 차이를 이해한다.
-- 학생 행동: 병렬을 만들려 했지만 직렬로 연결한다.
-- 탐지 신호: 그래프는 직렬이지만 설명은 “각 전구가 따로 길을 가진다”라고 말한다.
-- 피드백: 두 전구가 같은 길에 있는지 다른 길에 있는지 손가락 경로로 따라가게 한다.
+- Goal: Understand how connection structure affects bulb brightness.
+- Learner action: Attempt to build a parallel circuit but connect the bulbs in series.
+- Detection signal: The graph is series, but the explanation says each bulb has its own path.
+- Feedback: Ask the learner to trace whether the two bulbs are on the same path or on different paths.
 
-## Scenario 3: 전류 소모 오개념
+## Scenario 3: Current Consumption Misconception
 
-- 목표: 전류가 전구에서 소모되는 것이 아니라 회로 전체에서 같은 경로를 따라 흐른다는 것을 이해한다.
-- 학생 행동: 전구 뒤쪽 전류가 줄어든다고 예측한다.
-- 탐지 신호: 예측과 시뮬레이션 전류값이 충돌한다.
-- 피드백: 전구 앞뒤 전류량을 동시에 표시하고 반례 시뮬레이션을 제공한다.
+- Goal: Understand that current is not consumed by a bulb; it flows through the same path in the whole closed circuit.
+- Learner action: Predict that current after the bulb will be lower.
+- Detection signal: The prediction conflicts with the simulated current values.
+- Feedback: Show current values before and after the bulb at the same time and provide a counterexample simulation.

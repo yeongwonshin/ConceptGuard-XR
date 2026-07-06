@@ -1,169 +1,169 @@
-# 2026년 AI·가상융합(XR) 서비스 개발자 경진대회 개발계획서 개선안
+# 2026 AI/XR Service Developer Contest: Improved Development Plan
 
-## □ 프로젝트 요약
+## Project Summary
 
-### 1. 프로젝트 개요
+### 1. Project Overview
 
-**프로젝트명**  
-**ConceptGuard XR: 오개념 강화 위험을 줄이는 AI 기반 XR 과학 튜터**
+**Project Name**  
+**ConceptGuard XR: An AI-Based XR Science Tutor That Reduces Misconception Reinforcement Risk**
 
-**한 줄 정의**  
-학생의 XR 조작 행동과 자연어 설명을 함께 분석하여, 과학 오개념이 굳어지기 전에 피드백 강도를 조절하는 탐구형 AI 튜터.
+**One-Line Definition**  
+An inquiry-based AI tutor that analyzes both XR manipulation behavior and natural-language explanations, then adjusts feedback intensity before science misconceptions become reinforced.
 
-**핵심 문제**  
-기존 AI 튜터는 학생의 말 또는 최종 답안만 보는 경우가 많습니다. 그러나 전기회로 학습에서는 학생이 실제로 어떤 순서로 부품을 연결했는지, 어떤 구조를 직렬/병렬로 착각했는지, 예측과 관찰이 어떻게 어긋났는지가 오개념 진단의 핵심입니다.
+**Core Problem**  
+Many existing AI tutors only look at what students say or at their final answers. In electric-circuit learning, however, misconception diagnosis depends on how students connect components, whether they confuse series and parallel structures, and how their predictions differ from observations.
 
-**해결 방식**  
-ConceptGuard XR은 회로 조작 로그, 그래프 구조, 시뮬레이션 결과, 학생 설명을 결합해 `공간-개념 불일치(SCD)`와 `오개념 강화 위험(MRR)`을 계산합니다. 이후 위험도에 따라 힌트, 확인 질문, 반례 시뮬레이션, 직접 설명을 선택합니다.
+**Solution Approach**  
+ConceptGuard XR combines circuit manipulation logs, graph structure, simulation results, and learner explanations to compute `Spatial-Conceptual Discrepancy (SCD)` and `Misconception Reinforcement Risk (MRR)`. Based on risk level, it selects hints, check questions, counterexample simulations, or direct explanations.
 
-### 2. 팀 구성 및 역할
+### 2. Team Roles
 
-| 역할 | 담당 | 산출물 |
+| Role | Owner | Deliverables |
 |---|---|---|
-| 프로젝트 총괄/알고리즘 | 신영원 | CUG-XR 알고리즘, 평가 지표, 일정/발표 총괄 |
-| XR 클라이언트 | 김규리 | Unity MR/VR 조작, 회로 부품 배치/연결, 시각화 UI |
-| AI 백엔드 | 장현우 | FastAPI, LLM/RAG, 오개념 점수화, 피드백 정책 |
-| 3D/시나리오/시연 | 이영인 | Blender 모델, 학습 시나리오, 데모 영상/스토리보드 |
+| Project lead / algorithm | Shin Youngwon | CUG-XR algorithm, evaluation metrics, schedule and presentation lead |
+| XR client | Kim Gyuri | Unity MR/VR manipulation, circuit component placement and connection, visualization UI |
+| AI backend | Jang Hyunwoo | FastAPI, LLM/RAG, misconception scoring, feedback policy |
+| 3D / scenarios / demo | Lee Youngin | Blender models, learning scenarios, demo video and storyboard |
 
-### 3. 개발 배경 및 목적
+### 3. Development Background and Purpose
 
-#### 개발 배경
-생성형 AI 튜터는 빠른 설명과 맞춤형 피드백을 제공할 수 있지만, 학생이 실제로 어떤 개념을 잘못 적용했는지 충분히 파악하기 어렵습니다. 특히 전기회로는 전류, 전압, 저항, 직렬·병렬 구조가 공간적 연결과 물리 법칙으로 함께 이해되어야 합니다. 따라서 학생의 말과 최종 정답만으로는 오개념을 놓칠 가능성이 큽니다.
+#### Background
+Generative AI tutors can provide fast explanations and customized feedback, but they often fail to identify which concept a student applied incorrectly. Electric circuits require integrated understanding of current, voltage, resistance, series/parallel structures, spatial connections, and physical laws. A student's words or final answer alone may miss important misconception signals.
 
-#### 개발 목적
-본 프로젝트의 목적은 정답을 제공하는 AI가 아니라, **오개념이 반복되어 강화되는 순간을 포착하고 피드백을 조절하는 AI·XR 학습 시스템**을 구현하는 것입니다. 학습자는 XR 공간에서 직접 실험하고, AI는 행동과 설명의 불일치를 근거로 질문형·탐구형 피드백을 제공합니다.
+#### Purpose
+This project aims to build an AI/XR learning system that does not simply provide correct answers. Instead, it detects moments when a misconception may be repeated and reinforced, then adjusts feedback accordingly. Learners experiment directly in XR space, while the AI provides question-based and inquiry-based feedback grounded in mismatches between behavior and explanation.
 
-#### 기대 효과
-- 학습자 조작 데이터와 자연어 설명을 결합해 기존 챗봇이 놓치는 오개념 신호 탐지
-- 전류 흐름, 전압 분포, 밝기 변화를 XR로 시각화해 추상 개념의 체화 지원
-- 교사용 대시보드로 학생별 취약 개념, 반복 오류, 수정 성공률 확인
-- 과학 실험 장비가 부족한 환경에서도 안전하고 반복 가능한 실험 경험 제공
+#### Expected Effects
+- Detect misconception signals that ordinary chatbots miss by combining manipulation data and natural-language explanations.
+- Support embodied understanding of abstract concepts by visualizing current flow, voltage distribution, and brightness changes in XR.
+- Provide teachers with dashboards for vulnerable concepts, repeated errors, and correction success rates.
+- Offer safe and repeatable experiment experiences even in environments with limited science-lab equipment.
 
-## □ 프로젝트 개발계획
+## Development Plan
 
-### 1. 서비스 시나리오
+### 1. Service Scenario
 
-1. 학생은 XR 공간에서 배터리, 전구, 저항, 스위치, 전선을 배치해 미션 회로를 구성합니다.
-2. 시스템은 부품 연결을 그래프로 변환해 회로 닫힘 여부, 직렬/병렬 구조, 전류·전압·밝기를 계산합니다.
-3. 학생은 “왜 이렇게 연결했는지”를 음성 또는 텍스트로 설명합니다.
-4. AI는 설명에서 핵심 개념 태그와 확신 표현을 추출합니다.
-5. 회로 구조, 예측, 설명, 시뮬레이션 결과의 불일치를 바탕으로 오개념 위험을 계산합니다.
-6. 위험도가 낮으면 최소 힌트, 중간이면 확인 질문, 높으면 반례 시뮬레이션, 매우 높으면 직접 설명과 재조작 요청을 제공합니다.
-7. 세션 종료 후 교사는 학생별 오개념 패턴과 피드백 효과를 리포트로 확인합니다.
+1. The learner places batteries, bulbs, resistors, switches, and wires in XR space to build a mission circuit.
+2. The system converts component connections into a graph and calculates closed-circuit status, series/parallel structure, current, voltage, and brightness.
+3. The learner explains, by voice or text, why the circuit was connected that way.
+4. The AI extracts concept tags and confidence expressions from the explanation.
+5. Misconception risk is calculated from mismatches among circuit structure, prediction, explanation, and simulation results.
+6. Low risk leads to minimal hints; medium risk leads to check questions; high risk leads to counterexample simulations; very high risk leads to direct explanations and a request to try again.
+7. After the session, the teacher reviews each student's misconception patterns and feedback effects in a report.
 
-### 2. MVP 학습 미션
+### 2. MVP Learning Missions
 
-| 미션 | 학습 목표 | 대표 오개념 | XR 피드백 |
+| Mission | Learning Goal | Representative Misconception | XR Feedback |
 |---|---|---|---|
-| M1. 불이 켜지는 회로 만들기 | 닫힌 회로 조건 이해 | 한쪽만 연결해도 전류가 흐른다고 생각 | 끊긴 지점 하이라이트, 전류 흐름 비시각화 |
-| M2. 직렬과 병렬 밝기 비교 | 연결 구조와 밝기 관계 이해 | 전구가 많으면 항상 어두워진다고 일반화 | 직렬/병렬 그래프 색상 구분, 밝기 비교 |
-| M3. 저항을 바꾸면 어떻게 될까 | 저항·전류·전압 관계 이해 | 저항이 전류를 ‘소모’한다고 생각 | 저항 전후 전류량 비교, 반례 시뮬레이션 |
+| M1. Build a circuit that lights a bulb | Understand closed-circuit conditions | Believing current flows with only one side connected | Highlight the break and do not visualize current flow |
+| M2. Compare series and parallel brightness | Understand how connection structure relates to brightness | Generalizing that more bulbs always means dimmer bulbs | Color-code series/parallel graphs and compare brightness |
+| M3. What happens when resistance changes? | Understand the relationship among resistance, current, and voltage | Believing resistance consumes current | Compare current before and after resistance and show a counterexample simulation |
 
-### 3. 핵심 기능
+### 3. Core Features
 
-- **XR 회로 조작**: Unity 기반 3D 회로 부품 잡기, 배치, 연결, 재배치
-- **회로 분석 엔진**: 그래프 기반 연결 판정, 직렬/병렬 판별, 간단 전류·전압·밝기 계산
-- **멀티모달 오개념 탐지**: 조작 순서, 회로 구조, 학생 설명, 예측값을 함께 분석
-- **CUG-XR 피드백 정책**: 위험도 기반 힌트·질문·반례·직접 설명 선택
-- **교사용 대시보드**: 오류 유형, 힌트 사용량, 피드백 후 수정 성공률, 개념별 취약도 표시
-- **안전한 생성형 AI 사용**: LLM은 설명 분석과 문장 생성에 사용하고, 정답 판정은 회로 엔진이 담당
+- **XR circuit manipulation**: Unity-based grabbing, placing, connecting, and rearranging of 3D circuit components
+- **Circuit analysis engine**: Graph-based connection judgment, series/parallel classification, and simple current/voltage/brightness calculation
+- **Multimodal misconception detection**: Analysis of manipulation sequence, circuit structure, learner explanation, and prediction values together
+- **CUG-XR feedback policy**: Risk-based selection of hints, questions, counterexamples, and direct explanations
+- **Teacher dashboard**: Error type, hint usage, correction success after feedback, and concept-level vulnerability display
+- **Safe use of generative AI**: The LLM analyzes explanations and generates wording, while final correctness is determined by the circuit engine
 
-### 4. 제안 알고리즘: CUG-XR
+### 4. Proposed Algorithm: CUG-XR
 
-CUG-XR은 `Concept-Uncertainty Guided XR Feedback`의 약자입니다. 핵심은 학생의 행동과 설명을 하나의 증거로 보지 않고, 여러 증거를 교차 검증해 피드백을 결정하는 것입니다.
+CUG-XR stands for `Concept-Uncertainty Guided XR Feedback`. Its key idea is to avoid treating a single learner behavior or explanation as the only evidence. Instead, it cross-checks multiple forms of evidence to decide the feedback strategy.
 
-#### 입력
-- `CircuitGraph`: 부품 노드와 연결 엣지
-- `ManipulationLog`: 배치, 연결, 삭제, 재시도 순서
-- `SimulationState`: 닫힘 여부, 전류, 전압, 밝기
-- `LearnerExplanation`: 학생 음성/텍스트 설명
-- `Prediction`: 학생의 밝기·전류 변화 예측
+#### Inputs
+- `CircuitGraph`: component nodes and connection edges
+- `ManipulationLog`: placement, connection, deletion, and retry order
+- `SimulationState`: closed status, current, voltage, and brightness
+- `LearnerExplanation`: learner voice or text explanation
+- `Prediction`: learner prediction about brightness or current change
 
-#### 중간 지표
-- `SCD`: Spatial-Conceptual Discrepancy, 공간 조작과 개념 설명의 불일치
-- `CEI`: Core Error Impact, 핵심 개념 오류의 심각도
-- `RER`: Repeated Error Rate, 동일 오류 반복률
-- `UCS`: Uncertainty/Confidence Signal, 확신 표현과 실제 오류의 충돌 정도
-- `POD`: Prediction-Observation Difference, 예측과 관찰의 차이
+#### Intermediate Metrics
+- `SCD`: Spatial-Conceptual Discrepancy, mismatch between spatial manipulation and conceptual explanation
+- `CEI`: Core Error Impact, severity of a core concept error
+- `RER`: Repeated Error Rate, repetition rate for the same error
+- `UCS`: Uncertainty/Confidence Signal, conflict between confidence expressions and actual error
+- `POD`: Prediction-Observation Difference, gap between prediction and observation
 
-#### 출력
-- `MRR`: Misconception Reinforcement Risk, 오개념 강화 위험 점수
+#### Outputs
+- `MRR`: Misconception Reinforcement Risk score
 - `FeedbackMode`: minimal_hint, check_question, counterexample_simulation, direct_explanation, retry_task
 
-#### 정책 예시
-| MRR 범위 | 피드백 방식 | 예시 |
+#### Policy Examples
+| MRR Range | Feedback Type | Example |
 |---|---|---|
-| 0.00~0.25 | 최소 힌트 | “전류가 지나갈 수 있는 닫힌 길이 있는지 확인해 볼까요?” |
-| 0.26~0.50 | 확인 질문 | “이 연결은 전구 두 개가 같은 길에 있나요, 다른 길에 있나요?” |
-| 0.51~0.75 | 반례 시뮬레이션 | “병렬 회로와 직렬 회로를 번갈아 켜서 밝기 차이를 비교해 봅시다.” |
-| 0.76~1.00 | 직접 설명 + 재조작 | “전류는 전구에서 소모되는 것이 아니라 회로 전체를 흐릅니다. 다시 연결해 볼까요?” |
+| 0.00-0.25 | Minimal hint | "Can you check whether there is a closed path for current to pass through?" |
+| 0.26-0.50 | Check question | "Are the two bulbs on the same path or on different paths?" |
+| 0.51-0.75 | Counterexample simulation | "Let's switch between parallel and series circuits and compare the brightness difference." |
+| 0.76-1.00 | Direct explanation + retry | "Current is not consumed by the bulb; it flows through the whole circuit. Try connecting it again." |
 
-### 5. 기술 구조
+### 5. Technical Structure
 
-| 영역 | 기술 | 역할 |
+| Area | Technology | Role |
 |---|---|---|
-| XR 클라이언트 | Unity, XR Interaction Toolkit, OpenXR, Meta XR SDK | 부품 조작, 연결 피드백, 시각화 |
-| 3D 에셋 | Blender, glTF/FBX | 회로 부품, 학습 공간, 시연 오브젝트 |
-| API 서버 | FastAPI, Pydantic | 세션 수집, 분석 요청, 피드백 반환 |
-| 회로 엔진 | Python, NetworkX | 회로 그래프 분석, 직렬/병렬 판정, 기초 계산 |
-| AI/RAG | LLM API, 벡터 검색 | 설명 분석, 개념 카드 검색, 피드백 문장 생성 |
-| 대시보드 | React/Next.js | 교사용 리포트, 학생별 진단 시각화 |
-| 저장소 | SQLite → PostgreSQL | 세션 로그, 오개념 태그, 피드백 이력 |
+| XR client | Unity, XR Interaction Toolkit, OpenXR, Meta XR SDK | Component manipulation, connection feedback, visualization |
+| 3D assets | Blender, glTF/FBX | Circuit components, learning space, demo objects |
+| API server | FastAPI, Pydantic | Session collection, analysis requests, feedback responses |
+| Circuit engine | Python, NetworkX | Circuit graph analysis, series/parallel judgment, basic calculation |
+| AI/RAG | LLM API, vector search | Explanation analysis, concept-card retrieval, feedback sentence generation |
+| Dashboard | React/Next.js | Teacher reports and student-level diagnosis visualization |
+| Storage | SQLite -> PostgreSQL | Session logs, misconception tags, feedback history |
 
-### 6. 개발 일정
+### 6. Development Schedule
 
-| 단계 | 기간 | 목표 | 주요 산출물 |
+| Phase | Duration | Goal | Key Deliverables |
 |---|---|---|---|
-| 1단계 | 1주 | 기획 고도화 | 미션 3종, 오개념 DB, 평가 루브릭 |
-| 2단계 | 2주 | XR 조작 MVP | Unity 부품 배치/연결, 기본 UI, 시각화 |
-| 3단계 | 2주 | 분석 엔진 | 회로 그래프 변환, 직렬/병렬 판정, 전류/전압 계산 |
-| 4단계 | 2주 | AI 피드백 | 설명 분석, CUG-XR 점수화, RAG 힌트 생성 |
-| 5단계 | 1주 | 대시보드/로그 | 세션 로그, 교사용 리포트, 수정 성공률 |
-| 6단계 | 1주 | 검증/시연 | 데모 영상, ablation, 발표 자료, 배포 패키지 |
+| Phase 1 | 1 week | Planning refinement | Three missions, misconception DB, evaluation rubric |
+| Phase 2 | 2 weeks | XR manipulation MVP | Unity component placement/connection, basic UI, visualization |
+| Phase 3 | 2 weeks | Analysis engine | Circuit-graph conversion, series/parallel judgment, current/voltage calculation |
+| Phase 4 | 2 weeks | AI feedback | Explanation analysis, CUG-XR scoring, RAG hint generation |
+| Phase 5 | 1 week | Dashboard/logging | Session logs, teacher reports, correction success rate |
+| Phase 6 | 1 week | Validation/demo | Demo video, ablation, presentation materials, deployment package |
 
-### 7. 검증 계획
+### 7. Validation Plan
 
-#### 비교 기준선
-- 단순 LLM 튜터
-- 정답 직접 제공형 튜터
-- 규칙 기반 피드백 튜터
-- XR 시각화만 제공하는 콘텐츠
+#### Comparison Baselines
+- Simple LLM tutor
+- Direct-answer tutor
+- Rule-based feedback tutor
+- XR visualization-only content
 
-#### 핵심 평가 지표
-- `FCR`: Feedback Correction Rate, 피드백 후 수정 성공률
-- `MRR Reduction`: 세션 내 오개념 강화 위험 감소량
-- `SCD Reduction`: 조작-설명 불일치 감소량
-- `HUR`: Hint Usefulness Rating, 힌트 유용도
-- `OAI`: Over-Assistant Intervention, 과도한 개입 정도
-- `Delayed Retention`: 1주 후 동일 개념 재검사 성과
+#### Core Evaluation Metrics
+- `FCR`: Feedback Correction Rate, correction success rate after feedback
+- `MRR Reduction`: reduction in misconception reinforcement risk within a session
+- `SCD Reduction`: reduction in manipulation-explanation mismatch
+- `HUR`: Hint Usefulness Rating
+- `OAI`: Over-Assistant Intervention, degree of excessive intervention
+- `Delayed Retention`: performance on the same concept after one week
 
-#### 제거 실험
-- 조작 로그 제거
-- 자연어 설명 분석 제거
-- 반례 시뮬레이션 제거
-- 피드백 강도 조절 제거
-- RAG 근거 설명 제거
+#### Ablation Studies
+- Remove manipulation logs
+- Remove natural-language explanation analysis
+- Remove counterexample simulation
+- Remove feedback-intensity adaptation
+- Remove RAG-based evidence explanations
 
-## □ 생성형 AI 활용계획
+## Generative AI Usage Plan
 
-■ 있음  
-□ 없음
+■ Used  
+□ Not used
 
-생성형 AI는 최종 정답 판정자가 아니라, 학생 설명 이해와 피드백 문장 생성에 제한적으로 사용합니다. 회로의 정오 판정은 그래프 분석과 시뮬레이션 로직으로 수행해 환각 가능성을 줄입니다.
+Generative AI is used only for understanding student explanations and generating feedback wording, not as the final judge of correctness. Circuit correctness is determined by graph analysis and simulation logic to reduce hallucination risk.
 
-### 활용 범위
-- 학생 설명에서 전류, 전압, 저항, 직렬, 병렬, 닫힌 회로 등 핵심 개념 추출
-- 조작 로그와 설명이 충돌할 때 가능한 오개념 후보 분류
-- RAG 기반 개념 카드에 근거한 짧은 힌트, 확인 질문, 반례 설명 생성
-- 세션 종료 후 학생별 취약 개념과 반복 오류를 교사용 문장으로 요약
+### Scope of Use
+- Extract core concepts such as current, voltage, resistance, series, parallel, and closed circuit from learner explanations
+- Classify possible misconception candidates when manipulation logs and explanations conflict
+- Generate short hints, check questions, and counterexample explanations grounded in RAG-based concept cards
+- Summarize vulnerable concepts and repeated errors for teachers after a session
 
-### 안전성 및 개인정보 보호
-- 학생 이름, 연락처, 학교 고유식별자는 저장하지 않고 익명 세션 ID 사용
-- 음성 입력은 텍스트 변환 후 원본 음성 폐기 또는 로컬 저장 옵션 제공
-- LLM 출력은 금지 표현 필터와 회로 검증 결과를 통과한 뒤 제공
-- 불확실성이 높은 경우 단정형 답변 대신 재확인 질문을 출력
-- 교사용 리포트에는 학생 낙인 표현 대신 “추가 탐구가 필요한 개념” 중심으로 표시
+### Safety and Privacy Protection
+- Do not store student names, contact information, school identifiers, or other direct identifiers; use anonymous session IDs.
+- Convert voice input to text, then discard raw audio or provide a local-storage option.
+- Provide LLM output only after passing prohibited-expression filters and circuit-verification checks.
+- When uncertainty is high, output a re-check question instead of a definitive answer.
+- In teacher reports, use wording centered on "concepts that need more inquiry" instead of stigmatizing student labels.
 
-## □ 차별성 요약
+## Differentiation Summary
 
-ConceptGuard XR의 차별성은 XR을 단순 시각화 도구로 쓰지 않는다는 점입니다. XR 조작 자체가 진단 데이터가 되고, AI는 이 데이터를 자연어 설명과 결합해 오개념 강화 위험을 계산합니다. 즉, 본 프로젝트는 “보여주는 XR”에서 “생각을 진단하고 회복시키는 XR”로 교육용 XR의 역할을 확장합니다.
+ConceptGuard XR is differentiated by not using XR as a simple visualization tool. XR manipulation itself becomes diagnostic data, and AI combines that data with natural-language explanations to calculate misconception reinforcement risk. In other words, this project expands educational XR from "XR that shows" to "XR that diagnoses and helps recover thinking."

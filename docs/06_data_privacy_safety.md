@@ -1,20 +1,20 @@
 # Data Privacy and Safety
 
-## 데이터 최소화
+## Data Minimization
 
-- 학생 실명 저장 금지
-- 세션 ID, 미션 ID, 이벤트 로그, 오류 태그만 저장
-- 음성 원본은 기본 저장하지 않고 STT 결과만 사용
+- Do not store students' real names.
+- Store only session IDs, mission IDs, event logs, and error tags.
+- Do not store raw voice recordings by default; use only STT results.
 
-## AI 안전장치
+## AI Safeguards
 
-- LLM은 정답 판정자가 아니라 설명 분석과 문장 생성 보조 도구로 제한
-- 회로 엔진의 검증 결과와 충돌하는 피드백은 차단
-- 불확실성이 높은 경우 “다시 확인해 보자” 형식의 질문으로 전환
-- 교사 리포트에는 낙인 표현을 사용하지 않음
+- Limit the LLM to explanation analysis and wording assistance, not final answer grading.
+- Block feedback that conflicts with circuit-engine verification results.
+- When uncertainty is high, switch to a prompt such as "Let's check that again."
+- Avoid stigmatizing wording in teacher reports.
 
-## 교육 윤리
+## Educational Ethics
 
-- 학생을 평가 대상으로 고정하지 않고, 오개념을 학습 과정의 신호로 표시
-- 피드백은 “틀렸다”보다 “무엇을 다시 관찰할까?” 중심으로 구성
-- 학습 데이터는 교육 목적 외 사용 금지
+- Do not fix students as evaluation targets; present misconceptions as signals in the learning process.
+- Center feedback on "What should we observe again?" rather than "You are wrong."
+- Do not use learning data for purposes outside education.

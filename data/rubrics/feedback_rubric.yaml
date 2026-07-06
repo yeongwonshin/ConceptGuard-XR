@@ -1,13 +1,13 @@
 rubric:
   minimal_hint:
     when: MRR < 0.25
-    principle: 학생의 탐구 흐름을 유지한다.
+    principle: Preserve the learner's inquiry flow.
   check_question:
     when: 0.25 <= MRR < 0.50
-    principle: 학생이 자기 설명을 재점검하도록 질문한다.
+    principle: Ask the learner to re-check their own explanation.
   counterexample_simulation:
     when: 0.50 <= MRR < 0.75
-    principle: 예측과 관찰의 차이를 XR로 경험하게 한다.
+    principle: Let the learner experience the difference between prediction and observation in XR.
   direct_explanation_and_retry:
     when: MRR >= 0.75
-    principle: 오개념 고착을 막기 위해 명시 설명 후 재조작을 요청한다.
+    principle: Prevent the misconception from becoming reinforced by giving an explicit explanation and asking for another attempt.

@@ -42,7 +42,7 @@ class AnalyzeRequest(BaseModel):
     learner_explanation: Optional[str] = ""
     prediction: Optional[Dict[str, Any]] = Field(default_factory=dict)
     manipulation_log: List[Dict[str, Any]] = Field(default_factory=list)
-    locale: str = "ko-KR"
+    locale: str = "en-US"
 
 
 class AnalyzeResponse(BaseModel):
@@ -80,20 +80,20 @@ def xr_config() -> Dict[str, Any]:
         "missions": [
             {
                 "id": "M1_CLOSED_CIRCUIT",
-                "title": "닫힌 회로 만들기",
-                "goal": "배터리에서 출발한 전류가 다시 배터리로 돌아오는 길을 완성한다.",
+                "title": "Build a Closed Circuit",
+                "goal": "Complete a path where current leaves the battery and returns to the battery.",
                 "allowed_components": ["battery", "wire", "switch", "bulb"],
             },
             {
                 "id": "M2_SERIES_PARALLEL",
-                "title": "직렬/병렬 밝기 비교",
-                "goal": "전류 경로 수와 전구 밝기 변화를 XR 전류 흐름으로 비교한다.",
+                "title": "Compare Series and Parallel Brightness",
+                "goal": "Compare the number of current paths and bulb brightness changes through XR current flow.",
                 "allowed_components": ["battery", "wire", "bulb", "resistor"],
             },
             {
                 "id": "M3_RESISTANCE_BRIGHTNESS",
-                "title": "저항과 밝기 예측",
-                "goal": "저항이 커질 때 전류와 전구 밝기가 어떻게 변하는지 예측 후 확인한다.",
+                "title": "Predict Resistance and Brightness",
+                "goal": "Predict and observe how current and bulb brightness change when resistance increases.",
                 "allowed_components": ["battery", "wire", "bulb", "resistor", "switch"],
             },
         ],
@@ -159,13 +159,13 @@ def _detect_misconceptions(req: AnalyzeRequest, result: CircuitResult) -> List[s
 
     if not result.closed_circuit:
         misconceptions.append("open_circuit_confusion")
-    if "소모" in text or any(keyword in text for keyword in ["전류가소모", "전류소모", "전류가줄", "뒤로갈수록약"]):
+    if any(keyword in text for keyword in ["usedup", "consumed", "currentdrops", "currentdecreases", "weakerafter", "lesscurrentafter"]):
         misconceptions.append("current_consumption_misconception")
-    if any(keyword in text for keyword in ["전압이흐", "전류랑전압", "전압=전류"]):
+    if any(keyword in text for keyword in ["voltageflows", "voltageandcurrent", "voltage=current", "voltageiscurrent"]):
         misconceptions.append("voltage_current_confusion")
     if result.topology in {"series", "parallel"}:
-        says_parallel = any(keyword in text for keyword in ["병렬", "나란히", "각자길", "두갈래"])
-        says_series = any(keyword in text for keyword in ["직렬", "한줄", "하나의길", "차례"])
+        says_parallel = any(keyword in text for keyword in ["parallel", "sidebyside", "separatepaths", "twopaths", "branches"])
+        says_series = any(keyword in text for keyword in ["series", "oneline", "singlepath", "onepath", "inorder"])
         if result.topology == "series" and says_parallel:
             misconceptions.append("series_parallel_confusion")
         if result.topology == "parallel" and says_series:
@@ -185,7 +185,7 @@ def _risk_signals(req: AnalyzeRequest, result: CircuitResult, misconceptions: Li
     repeated_errors = sum(1 for event in req.manipulation_log if event.get("event_type") in {"disconnect", "retry", "failed_connect"})
     prediction_diff = 1.0 if "prediction_observation_mismatch" in misconceptions else 0.0
     core_error = 1.0 if any(m in misconceptions for m in ["open_circuit_confusion", "current_consumption_misconception"]) else 0.35
-    uncertainty = 0.5 if any(k in (req.learner_explanation or "") for k in ["모르", "아마", "대충", "헷갈"]) else 0.1
+    uncertainty = 0.5 if any(k in (req.learner_explanation or "").lower() for k in ["not sure", "maybe", "roughly", "confused", "i guess"]) else 0.1
     scd = 0.15 + 0.18 * len(misconceptions)
     if not result.closed_circuit:
         scd += 0.25
@@ -200,18 +200,18 @@ def _risk_signals(req: AnalyzeRequest, result: CircuitResult, misconceptions: Li
 
 def _feedback_text(req: AnalyzeRequest, result: CircuitResult, misconceptions: List[str], feedback_mode: str) -> str:
     if "open_circuit_confusion" in misconceptions:
-        return "배터리에서 출발한 전류가 전구를 지나 다시 배터리로 돌아오는 길이 완성됐는지 손으로 경로를 따라가 보세요. XR의 파란 유령선을 닫힌 고리로 만들어 봅시다."
+        return "Trace the path with your hand: does current leave the battery, pass through the bulb, and return to the battery? Use the blue XR ghost line to make a closed loop."
     if "current_consumption_misconception" in misconceptions:
-        return "전류가 전구에서 사라지는지 확인해 볼까요? 전구 앞뒤 전류값을 동시에 띄웠습니다. 닫힌 한 경로에서는 같은 전류가 흐르는지 비교해 보세요."
+        return "Let's check whether current disappears in the bulb. Compare the current values before and after the bulb; in one closed path, the same current should flow through the path."
     if "series_parallel_confusion" in misconceptions:
-        return "전구들이 같은 길 위에 차례로 있는지, 서로 다른 갈래 길에 있는지 XR 전류 경로의 개수를 세어 보세요. 갈래가 나뉘면 병렬 후보입니다."
+        return "Count the XR current paths. Are the bulbs on the same path one after another, or are they on separate branches? Separate branches indicate a possible parallel circuit."
     if "prediction_observation_mismatch" in misconceptions:
-        return "예측한 밝기와 시뮬레이션 밝기가 다릅니다. 저항값과 전류 화살표 속도를 비교한 뒤 예측을 다시 말해 보세요."
+        return "The predicted brightness and the simulated brightness do not match. Compare the resistance value and current-arrow speed, then state your prediction again."
     if feedback_mode == "minimal_hint":
-        return "좋습니다. 이제 전류 화살표가 끊기지 않고 한 바퀴 도는지 확인해 보세요."
+        return "Good. Now check whether the current arrows complete a full loop without any break."
     if feedback_mode == "check_question":
-        return "현재 회로에서 전류가 선택할 수 있는 길은 몇 개인가요? 전구를 지나기 전과 후의 경로를 손으로 따라가 보세요."
-    return "XR 전류 흐름과 전구 밝기 시뮬레이션을 켰습니다. 관찰 결과와 방금 설명이 일치하는지 비교한 뒤 회로를 한 번 수정해 보세요."
+        return "How many paths can current take in this circuit? Trace the path before and after the bulb with your hand."
+    return "XR current flow and bulb-brightness simulation are now on. Compare your observation with your explanation, then revise the circuit once."
 
 
 def _electrical_payload(result: CircuitResult) -> Dict[str, Any]:
@@ -239,7 +239,7 @@ def _xr_scene(result: CircuitResult, misconceptions: List[str], feedback_mode: s
                 }
             )
     for missing in result.missing_connections:
-        overlays.append({"target_id": "workbench", "label": f"필요한 연결: {missing}", "severity": "danger"})
+        overlays.append({"target_id": "workbench", "label": f"Missing connection: {missing}", "severity": "danger"})
 
     return {
         "scene_state": "closed_loop" if result.closed_circuit else "open_loop",
@@ -269,14 +269,14 @@ def _ghost_actions(result: CircuitResult) -> List[Dict[str, Any]]:
         actions.append(
             {
                 "type": "complete_return_path",
-                "label": "전구에서 배터리 반대쪽 단자로 돌아가는 선을 연결하세요.",
+                "label": "Connect a return wire from the bulb to the opposite terminal of the battery.",
                 "highlight": ["battery", "bulb"],
             }
         )
     if "battery" in result.missing_connections:
-        actions.append({"type": "place_component", "component_type": "battery", "label": "전원 배터리를 배치하세요."})
+        actions.append({"type": "place_component", "component_type": "battery", "label": "Place a power battery."})
     if "load" in result.missing_connections:
-        actions.append({"type": "place_component", "component_type": "bulb", "label": "전구 또는 저항을 배치하세요."})
+        actions.append({"type": "place_component", "component_type": "bulb", "label": "Place a bulb or resistor."})
     return actions
 
 
@@ -285,7 +285,7 @@ def _teacher_summary(req: AnalyzeRequest, result: CircuitResult, misconceptions:
         "risk_level": "high" if mrr >= 0.75 else "medium" if mrr >= 0.5 else "low",
         "headline": f"{req.mission_id}: {result.topology}, {'closed' if result.closed_circuit else 'open'} circuit",
         "misconception_count": len(misconceptions),
-        "recommended_next_action": "개별 개입" if mrr >= 0.75 else "추가 XR 재시도" if mrr >= 0.5 else "다음 미션 진행 가능",
+        "recommended_next_action": "Provide individual intervention" if mrr >= 0.75 else "Ask for another XR retry" if mrr >= 0.5 else "Ready for the next mission",
     }
 
 

@@ -24,20 +24,20 @@ FastAPI Backend
         └─ Teacher summary API
 ```
 
-## 주요 데이터 흐름
+## Main Data Flow
 
-1. 학생이 XR 공간에서 배터리, 전구, 저항, 스위치, 전선을 잡고 배치한다.
-2. `XRSocketInteractor`가 단자 결합을 만들고 `XRWireConnection`이 연결선을 유지한다.
-3. `CircuitGraphBuilder`가 씬의 부품과 전선을 회로 그래프 JSON으로 변환한다.
-4. Unity가 `POST /analyze`로 회로 그래프, 학생 설명, 예측, 조작 로그를 보낸다.
-5. 서버가 닫힌 회로 여부, topology, 전류/전압/밝기, 오개념 위험도를 계산한다.
-6. 서버가 `xr_scene`에 전류 경로, 오버레이, ghost action, 코치 메시지를 담아 반환한다.
-7. Unity가 `CurrentFlowVisualizer`와 `MisconceptionCoachPanel`로 즉시 피드백을 표시한다.
+1. The learner grabs and places batteries, bulbs, resistors, switches, and wires in XR space.
+2. `XRSocketInteractor` creates terminal attachments, and `XRWireConnection` maintains connection lines.
+3. `CircuitGraphBuilder` converts scene components and wires into circuit-graph JSON.
+4. Unity sends the circuit graph, learner explanation, prediction, and manipulation log to `POST /analyze`.
+5. The server calculates whether the circuit is closed, its topology, current, voltage, brightness, and misconception risk.
+6. The server returns current paths, overlays, ghost actions, and a coach message in `xr_scene`.
+7. Unity displays immediate feedback through `CurrentFlowVisualizer` and `MisconceptionCoachPanel`.
 
-## 제품화 시 확장 지점
+## Production Expansion Points
 
-- 인메모리 세션 저장소를 PostgreSQL 또는 학교별 테넌트 DB로 교체
-- RAG 피드백 생성기를 교사 검수 자료 기반으로 제한
-- 교사용 대시보드에 학생별 misconception trajectory 표시
-- Unity Addressables로 미션/부품 콘텐츠 원격 업데이트
-- Quest Store, PICO, Apple Vision Pro 등 배포 채널별 빌드 파이프라인 분리
+- Replace the in-memory session store with PostgreSQL or a school-specific tenant database.
+- Restrict the RAG feedback generator to teacher-reviewed materials.
+- Show each student's misconception trajectory in the teacher dashboard.
+- Use Unity Addressables for remote mission and component content updates.
+- Separate build pipelines by deployment channel, such as Quest Store, PICO, and Apple Vision Pro.

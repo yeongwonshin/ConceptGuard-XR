@@ -1,26 +1,26 @@
 # Prototype Release Checklist
 
-ConceptGuard XR는 이번 변경으로 “문서형 아이디어”에서 “XR 조작 → 회로 분석 → 오개념 피드백 → XR 시각화”가 연결되는 시제품 구조가 되었습니다. 단, 바로 유료 판매하려면 아래 항목을 확인해야 합니다.
+With this update, ConceptGuard XR has moved from a document-only idea to a prototype structure that connects XR manipulation, circuit analysis, misconception feedback, and XR visualization. Before paid release, the items below must be verified.
 
-## 배포 가능한 데모 기준
+## Demo-Ready Criteria
 
-- FastAPI API가 Docker Compose로 실행된다.
-- Unity XR 씬에서 부품을 잡고 단자에 연결할 수 있다.
-- `POST /analyze`가 닫힌 회로, 열린 회로, 직렬/병렬 후보, 전류/전압/밝기 값을 반환한다.
-- Unity가 `xr_scene.current_flow`를 받아 전류 흐름을 LineRenderer로 표시한다.
-- 피드백 패널이 오개념 위험도에 따라 질문/반례/직접 설명을 표시한다.
+- The FastAPI API runs through Docker Compose.
+- Users can grab components and connect terminals in the Unity XR scene.
+- `POST /analyze` returns closed-circuit status, open-circuit status, series/parallel candidates, current, voltage, and brightness values.
+- Unity receives `xr_scene.current_flow` and displays current flow with LineRenderer.
+- The feedback panel displays questions, counterexamples, or direct explanations based on misconception risk.
 
-## 판매 전 제품화 필수 조건
+## Required Productization Before Sale
 
-1. **기기 검증**: Meta Quest 3, Quest Pro 등 목표 기기에서 FPS, 발열, 컨트롤러/핸드 트래킹 입력을 검증합니다.
-2. **콘텐츠 검증**: 회로 오개념 규칙을 교과서/교사 검토 기준과 맞춥니다.
-3. **법무/개인정보**: 학생 음성/행동 로그 저장 시 개인정보처리방침과 동의 절차가 필요합니다.
-4. **안전장치**: AI 피드백은 정답 단정이 아니라 검증된 루브릭 기반으로 제한해야 합니다.
-5. **운영성**: 교사 계정, 학교별 테넌트, 세션 보관 기간, 로그 삭제 기능을 넣어야 합니다.
-6. **결제/라이선스**: 학교 단위 좌석 라이선스, 체험판, 환불 정책을 별도 구현해야 합니다.
+1. **Device validation**: Validate FPS, thermals, controller input, and hand-tracking input on target devices such as Meta Quest 3 and Quest Pro.
+2. **Content validation**: Align circuit-misconception rules with textbook and teacher-review standards.
+3. **Legal and privacy**: Add a privacy policy and consent flow when storing student voice or behavior logs.
+4. **Safeguards**: Restrict AI feedback to verified rubric-based responses, not unsupported claims of correctness.
+5. **Operations**: Add teacher accounts, school tenants, session-retention rules, and log-deletion features.
+6. **Payment and licensing**: Implement school-seat licensing, trials, and refund policies separately.
 
-## 권장 상용 포지셔닝
+## Recommended Commercial Positioning
 
-- “완성형 AI 교사”가 아니라 **XR 기반 회로 오개념 진단 실험실**로 판매합니다.
-- 초기 타깃은 B2C 일반 판매보다 학교/학원 파일럿, 영재원, 과학관, 에듀테크 PoC가 적합합니다.
-- 가격은 첫 버전에서 월 구독보다 파일럿 패키지/기관 라이선스가 리스크가 낮습니다.
+- Sell it as an **XR-based circuit misconception diagnostic lab**, not as a complete AI teacher.
+- The initial target should be school or academy pilots, gifted-education centers, science museums, and edtech PoCs rather than broad B2C sales.
+- For the first version, pilot packages or institutional licenses are lower-risk than monthly subscriptions.

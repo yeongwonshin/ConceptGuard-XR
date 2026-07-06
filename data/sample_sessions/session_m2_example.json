@@ -21,7 +21,7 @@
       "event_type": "explain",
       "timestamp_ms": 8000,
       "payload": {
-        "text": "전구 두 개를 나란히 연결했어요."
+        "text": "I connected the two bulbs side by side."
       }
     }
   ]

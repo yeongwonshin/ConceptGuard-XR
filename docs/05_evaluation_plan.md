@@ -1,22 +1,22 @@
 # Evaluation Plan
 
-## 평가 질문
+## Evaluation Questions
 
-1. ConceptGuard XR은 단순 LLM 튜터보다 오개념 수정률을 높이는가?
-2. XR 조작 로그를 포함하면 오개념 탐지 정확도가 향상되는가?
-3. 피드백 강도 조절은 학습자의 탐구 몰입을 해치지 않으면서 수정 성공률을 높이는가?
+1. Does ConceptGuard XR improve misconception correction rates compared with a simple LLM tutor?
+2. Does including XR manipulation logs improve misconception detection accuracy?
+3. Does adaptive feedback intensity improve correction success without reducing learner inquiry engagement?
 
-## 실험 설계
+## Study Design
 
-- 사전 개념 검사 → XR 학습 세션 → 사후 개념 검사 → 1주 후 지연 검사
-- 비교군: 단순 LLM, 정답 직접 제공, XR 시각화만 제공, ConceptGuard XR
-- 정량 지표: FCR, MRR 감소량, SCD 감소량, 힌트 사용량, 재시도 횟수
-- 정성 지표: 학생 인터뷰, 교사 관찰, 힌트 유용도 설문
+- Pre-concept test -> XR learning session -> post-concept test -> delayed test after one week
+- Comparison groups: simple LLM, direct-answer tutor, XR visualization only, and ConceptGuard XR
+- Quantitative metrics: FCR, MRR reduction, SCD reduction, hint usage, and retry count
+- Qualitative metrics: student interviews, teacher observations, and hint-usefulness surveys
 
-## 데모용 Ablation
+## Demo Ablation
 
-- A: 조작 로그 제거
-- B: 자연어 설명 제거
-- C: 피드백 조절 제거
-- D: RAG 근거 설명 제거
-- Full: 전체 기능 포함
+- A: Remove manipulation logs
+- B: Remove natural-language explanation analysis
+- C: Remove feedback adaptation
+- D: Remove RAG-based evidence explanations
+- Full: Include all features

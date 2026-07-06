@@ -29,7 +29,7 @@ def test_analyze_returns_xr_scene_directives():
                     {"from": "bulb_2", "to": "battery_1"},
                 ],
             },
-            "learner_explanation": "전류가 첫 전구에서 소모돼요.",
+            "learner_explanation": "Current is used up by the first bulb.",
             "prediction": {"brightness": "dim", "topology": "series"},
             "manipulation_log": [],
         },

@@ -22,8 +22,14 @@
         "connect",
         "disconnect",
         "simulate",
+        "analyze",
         "explain",
-        "retry"
+        "retry",
+        "failed_connect",
+        "switch_opened",
+        "switch_closed",
+        "clear",
+        "reset"
       ]
     },
     "timestamp_ms": {

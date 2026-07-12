@@ -47,7 +47,7 @@ class CircuitAnalyzer:
     """Prototype-grade circuit analyzer for ConceptGuard XR.
 
     The analyzer is deliberately conservative: it handles the MVP circuit set
-    used in the XR prototype (battery, wire, switch, bulb, resistor), detects
+    used in the XR client (battery, wire, switch, bulb, resistor), detects
     open circuits, classifies common series/parallel layouts, and returns
     values that are good enough for real-time instructional visualization.
 
@@ -125,12 +125,14 @@ class CircuitAnalyzer:
             )
 
         subgraph = active_graph.subgraph(closed_component).copy() if closed_component else active_graph
-        topology = self._infer_topology(subgraph, loads)
-        source_voltage = self._source_voltage(subgraph, batteries)
-        equivalent_r = self._equivalent_resistance(subgraph, loads, topology)
+        active_batteries = [battery for battery in batteries if battery in subgraph]
+        active_loads = [load for load in loads if load in subgraph]
+        topology = self._infer_topology(subgraph, active_loads)
+        source_voltage = self._source_voltage(subgraph, active_batteries)
+        equivalent_r = self._equivalent_resistance(subgraph, active_loads, topology)
         total_current = source_voltage / equivalent_r if equivalent_r and equivalent_r > 0 else 0.0
-        values = self._node_values(subgraph, loads, topology, source_voltage, total_current, equivalent_r)
-        paths = self._flow_paths(subgraph, batteries, loads, topology, source_voltage, total_current)
+        values = self._node_values(subgraph, active_loads, topology, source_voltage, total_current, equivalent_r)
+        paths = self._flow_paths(subgraph, active_batteries, active_loads, topology, source_voltage, total_current)
 
         return CircuitResult(
             closed_circuit=True,

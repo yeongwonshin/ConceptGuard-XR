@@ -10,7 +10,7 @@ Next steps:
   pip install -r services/api-fastapi/requirements.txt
   PYTHONPATH="$PWD/services/circuit-engine:$PWD/services" uvicorn services/api-fastapi/app/main:app --reload
 
-Docker prototype:
+Docker backend:
   cd infra
   docker compose up --build
 MSG

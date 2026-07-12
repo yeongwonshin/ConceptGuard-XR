@@ -28,7 +28,7 @@
 ## 4. Non-Functional Requirements
 
 - Analysis response time: target under 2 seconds for the MVP.
-- Offline fallback: provide rule-based hints when the LLM fails.
+- Fail-closed analysis: never replace an API failure with fabricated or cached success output.
 - Privacy: store data with anonymous session IDs.
 - Classroom usability: complete the tutorial in under 5 minutes.
-- Demo stability: support demo-data mode during network failures.
+- Connection transparency: show configuration and network failures clearly and disable analysis until the API is healthy.

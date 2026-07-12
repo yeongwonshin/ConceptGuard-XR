@@ -51,11 +51,12 @@ namespace ConceptGuardXR
         [SerializeField] private float voltageV = 3f;
         [SerializeField] private bool switchClosed = true;
 
-        [Header("XR Terminals")]
+        [Header("Circuit Terminals")]
         [SerializeField] private List<Transform> terminals = new List<Transform>();
 
         public string ComponentId => componentId;
         public CircuitComponentType ComponentType => componentType;
+        public string DisplayLabel => string.IsNullOrWhiteSpace(displayLabel) ? componentId : displayLabel;
         public IReadOnlyList<Transform> Terminals => terminals;
         public bool SwitchClosed
         {
@@ -63,19 +64,20 @@ namespace ConceptGuardXR
             set => switchClosed = value;
         }
 
-        private void Reset()
+        public void Configure(
+            string id,
+            CircuitComponentType type,
+            string label,
+            float resistance,
+            float voltage,
+            IEnumerable<Transform> componentTerminals)
         {
-            EnsureId();
-            displayLabel = gameObject.name;
-        }
-
-        private void OnValidate()
-        {
-            EnsureId();
-            if (string.IsNullOrWhiteSpace(displayLabel))
-            {
-                displayLabel = gameObject.name;
-            }
+            componentId = string.IsNullOrWhiteSpace(id) ? Guid.NewGuid().ToString("N") : id;
+            componentType = type;
+            displayLabel = string.IsNullOrWhiteSpace(label) ? componentId : label;
+            resistanceOhm = Mathf.Max(0f, resistance);
+            voltageV = Mathf.Max(0f, voltage);
+            terminals = componentTerminals == null ? new List<Transform>() : new List<Transform>(componentTerminals);
         }
 
         public CircuitNodePayload ToPayload()
@@ -84,10 +86,14 @@ namespace ConceptGuardXR
             {
                 id = componentId,
                 type = ToApiType(componentType),
-                label = string.IsNullOrWhiteSpace(displayLabel) ? componentId : displayLabel,
-                resistance_ohm = componentType == CircuitComponentType.Bulb || componentType == CircuitComponentType.Resistor ? resistanceOhm : 0f,
+                label = DisplayLabel,
+                resistance_ohm = componentType == CircuitComponentType.Bulb || componentType == CircuitComponentType.Resistor
+                    ? resistanceOhm
+                    : 0f,
                 voltage_v = componentType == CircuitComponentType.Battery ? voltageV : 0f,
-                state = componentType == CircuitComponentType.Switch ? (switchClosed ? "closed" : "open") : "active",
+                state = componentType == CircuitComponentType.Switch
+                    ? (switchClosed ? "closed" : "open")
+                    : "active",
                 position = Vector3Payload.From(transform.position)
             };
         }
@@ -98,7 +104,11 @@ namespace ConceptGuardXR
             var bestDistance = float.MaxValue;
             foreach (var terminal in terminals)
             {
-                if (terminal == null) continue;
+                if (terminal == null)
+                {
+                    continue;
+                }
+
                 var distance = Vector3.SqrMagnitude(terminal.position - worldPosition);
                 if (distance < bestDistance)
                 {
@@ -106,28 +116,21 @@ namespace ConceptGuardXR
                     bestDistance = distance;
                 }
             }
+
             return best != null ? best : transform;
         }
 
         public static string ToApiType(CircuitComponentType type)
         {
-            switch (type)
+            return type switch
             {
-                case CircuitComponentType.Battery: return "battery";
-                case CircuitComponentType.Bulb: return "bulb";
-                case CircuitComponentType.Resistor: return "resistor";
-                case CircuitComponentType.Switch: return "switch";
-                case CircuitComponentType.Wire: return "wire";
-                default: return "unknown";
-            }
-        }
-
-        private void EnsureId()
-        {
-            if (string.IsNullOrWhiteSpace(componentId))
-            {
-                componentId = $"{gameObject.name}_{Guid.NewGuid().ToString("N").Substring(0, 8)}";
-            }
+                CircuitComponentType.Battery => "battery",
+                CircuitComponentType.Bulb => "bulb",
+                CircuitComponentType.Resistor => "resistor",
+                CircuitComponentType.Switch => "switch",
+                CircuitComponentType.Wire => "wire",
+                _ => "unknown"
+            };
         }
     }
 }

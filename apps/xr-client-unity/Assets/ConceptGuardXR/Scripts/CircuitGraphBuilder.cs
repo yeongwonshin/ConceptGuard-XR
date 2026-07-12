@@ -20,7 +20,7 @@ namespace ConceptGuardXR
         public string learner_explanation;
         public PredictionPayload prediction = new PredictionPayload();
         public List<SessionEventPayload> manipulation_log = new List<SessionEventPayload>();
-        public string locale = "ko-KR";
+        public string locale;
     }
 
     [Serializable]
@@ -42,24 +42,23 @@ namespace ConceptGuardXR
 
     public sealed class CircuitGraphBuilder : MonoBehaviour
     {
-        [SerializeField] private string sessionId = "xr-demo-session";
-        [SerializeField] private string missionId = "M2_SERIES_PARALLEL";
-        [SerializeField] private string learnerExplanation = "";
+        [SerializeField] private string sessionId;
+        [SerializeField] private string missionId;
+        [SerializeField] private string locale = "ko-KR";
+        [SerializeField] private string learnerExplanation = string.Empty;
         [SerializeField] private string predictedBrightness = "unknown";
         [SerializeField] private string predictedTopology = "unknown";
 
         private readonly List<SessionEventPayload> sessionEvents = new List<SessionEventPayload>();
 
-        public string SessionId
-        {
-            get => sessionId;
-            set => sessionId = value;
-        }
+        public string SessionId => sessionId;
+        public string MissionId => missionId;
 
-        public string MissionId
+        public void Configure(string newSessionId, string newMissionId, string newLocale)
         {
-            get => missionId;
-            set => missionId = value;
+            sessionId = newSessionId ?? throw new ArgumentNullException(nameof(newSessionId));
+            missionId = newMissionId ?? throw new ArgumentNullException(nameof(newMissionId));
+            locale = string.IsNullOrWhiteSpace(newLocale) ? "en-US" : newLocale;
         }
 
         public void SetLearnerExplanation(string explanation)
@@ -69,8 +68,8 @@ namespace ConceptGuardXR
 
         public void SetPrediction(string brightness, string topology)
         {
-            predictedBrightness = brightness ?? "unknown";
-            predictedTopology = topology ?? "unknown";
+            predictedBrightness = string.IsNullOrWhiteSpace(brightness) ? "unknown" : brightness;
+            predictedTopology = string.IsNullOrWhiteSpace(topology) ? "unknown" : topology;
         }
 
         public CircuitGraphPayload BuildGraph()
@@ -78,43 +77,68 @@ namespace ConceptGuardXR
             var graph = new CircuitGraphPayload();
             foreach (var node in FindObjectsByType<XRComponentNode>(FindObjectsSortMode.None))
             {
-                graph.nodes.Add(node.ToPayload());
+                if (node.isActiveAndEnabled)
+                {
+                    graph.nodes.Add(node.ToPayload());
+                }
             }
+
             foreach (var wire in FindObjectsByType<XRWireConnection>(FindObjectsSortMode.None))
             {
+                if (!wire.isActiveAndEnabled)
+                {
+                    continue;
+                }
+
                 var edge = wire.ToPayload();
                 if (!string.IsNullOrEmpty(edge.from) && !string.IsNullOrEmpty(edge.to))
                 {
                     graph.edges.Add(edge);
                 }
             }
+
             return graph;
         }
 
         public string BuildAnalyzeJson()
         {
+            if (string.IsNullOrWhiteSpace(sessionId) || string.IsNullOrWhiteSpace(missionId))
+            {
+                throw new InvalidOperationException("CircuitGraphBuilder must be configured before analysis.");
+            }
+
             var request = new AnalyzeRequestPayload
             {
                 session_id = sessionId,
                 mission_id = missionId,
                 circuit_graph = BuildGraph(),
                 learner_explanation = learnerExplanation,
-                prediction = new PredictionPayload { brightness = predictedBrightness, topology = predictedTopology },
-                manipulation_log = sessionEvents,
-                locale = "ko-KR"
+                prediction = new PredictionPayload
+                {
+                    brightness = predictedBrightness,
+                    topology = predictedTopology
+                },
+                manipulation_log = new List<SessionEventPayload>(sessionEvents),
+                locale = locale
             };
+
             return JsonUtility.ToJson(request);
         }
 
         public void RecordEvent(string eventType, string payloadJson = "{}")
         {
+            if (string.IsNullOrWhiteSpace(eventType))
+            {
+                return;
+            }
+
             sessionEvents.Add(new SessionEventPayload
             {
                 session_id = sessionId,
                 mission_id = missionId,
                 event_type = eventType,
                 timestamp_ms = Mathf.RoundToInt(Time.realtimeSinceStartup * 1000f),
-                payload_json = payloadJson
+                payload_json = string.IsNullOrWhiteSpace(payloadJson) ? "{}" : payloadJson
             });
         }
     }

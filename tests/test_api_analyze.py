@@ -39,3 +39,29 @@ def test_analyze_returns_xr_scene_directives():
     assert payload["closed_circuit"] is True
     assert payload["xr_scene"]["current_flow"]
     assert "current_consumption_misconception" in payload["misconceptions"]
+
+
+def test_analyze_localizes_feedback_for_korean_unclosed_circuit():
+    response = client.post(
+        "/analyze",
+        json={
+            "session_id": "test-session-ko",
+            "mission_id": "M1_CLOSED_CIRCUIT",
+            "locale": "ko-KR",
+            "circuit_graph": {
+                "nodes": [
+                    {"id": "battery_1", "type": "battery", "voltage_v": 3.0},
+                    {"id": "bulb_1", "type": "bulb", "resistance_ohm": 10.0},
+                ],
+                "edges": [{"from": "battery_1", "to": "bulb_1"}],
+            },
+            "learner_explanation": "전류가 전구에서 소모된다.",
+            "prediction": {"brightness": "bright", "topology": "series"},
+            "manipulation_log": [],
+        },
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["closed_circuit"] is False
+    assert "닫힌 경로" in payload["feedback_text"]
+    assert payload["teacher_summary"]["recommended_next_action"]

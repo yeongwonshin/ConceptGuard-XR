@@ -1,23 +1,7 @@
 {
-  "apiBaseUrl": "http://localhost:8000",
-  "defaultMissionId": "M2_SERIES_PARALLEL",
-  "prototypeTargetDevices": [
-    "Meta Quest 3",
-    "Meta Quest Pro",
-    "Apple Vision Pro via Unity PolySpatial adaptation"
-  ],
-  "xrStack": {
-    "runtime": "OpenXR",
-    "unityPackages": [
-      "XR Interaction Toolkit",
-      "OpenXR Plugin",
-      "TextMeshPro"
-    ],
-    "coreInteractions": [
-      "grab battery/bulb/resistor/switch",
-      "snap terminals into XR sockets",
-      "toggle switch with controller or hand ray",
-      "visualize current flow with pulsing LineRenderer"
-    ]
-  }
+  "api_base_url": "http://127.0.0.1:8000",
+  "request_timeout_seconds": 10,
+  "session_id_prefix": "conceptguard-session",
+  "mission_id": "M2_SERIES_PARALLEL",
+  "locale": "ko-KR"
 }

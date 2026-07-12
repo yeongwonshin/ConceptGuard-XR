@@ -6,7 +6,7 @@
 {
   "status": "ok",
   "service": "conceptguard-xr-api",
-  "version": "0.3.0-prototype"
+  "version": "1.0.0"
 }
 ```
 
@@ -16,7 +16,7 @@ This endpoint lets the Unity XR client retrieve missions, allowed components, an
 
 ```json
 {
-  "api_version": "0.3.0-prototype",
+  "api_version": "1.0.0",
   "missions": [
     {
       "id": "M2_SERIES_PARALLEL",
@@ -27,7 +27,7 @@ This endpoint lets the Unity XR client retrieve missions, allowed components, an
   ],
   "xr_features": {
     "hand_tracking": "OpenXR XR Hands optional",
-    "interaction": "XR Interaction Toolkit grab + socket attach",
+    "interaction": "OpenXR device tracking + custom grip/trigger interaction",
     "visualization": "LineRenderer current-flow pulse, node overlays, ghost connection hints"
   }
 }
@@ -35,11 +35,11 @@ This endpoint lets the Unity XR client retrieve missions, allowed components, an
 
 ## POST /sessions/events
 
-Unity stores manipulation events such as grab, connect, disconnect, explain, and retry. The prototype stores events in memory; production should replace this with a database.
+Unity stores manipulation events such as grab, connect, disconnect, explain, and retry. The current API process stores session events in memory; deploy a persistent event store before multi-instance production use.
 
 ```json
 {
-  "session_id": "xr-demo-001",
+  "session_id": "conceptguard-session-001",
   "mission_id": "M2_SERIES_PARALLEL",
   "event_type": "connect",
   "timestamp_ms": 3412,
@@ -53,7 +53,7 @@ Unity stores manipulation events such as grab, connect, disconnect, explain, and
 
 ```json
 {
-  "session_id": "xr-demo-001",
+  "session_id": "conceptguard-session-001",
   "mission_id": "M2_SERIES_PARALLEL",
   "circuit_graph": {
     "nodes": [
@@ -77,7 +77,7 @@ Unity stores manipulation events such as grab, connect, disconnect, explain, and
 
 ```json
 {
-  "session_id": "xr-demo-001",
+  "session_id": "conceptguard-session-001",
   "mission_id": "M2_SERIES_PARALLEL",
   "closed_circuit": true,
   "topology": "series",

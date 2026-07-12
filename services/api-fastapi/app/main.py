@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -19,16 +20,25 @@ from llm_feedback.feedback_policy import RiskSignals, compute_mrr, select_feedba
 
 app = FastAPI(
     title="ConceptGuard XR API",
-    version="0.3.0-prototype",
-    description="XR circuit misconception guardrail API for Unity/OpenXR prototypes.",
+    version="1.0.0",
+    description="XR circuit misconception guardrail API for the ConceptGuard Unity/OpenXR client.",
 )
+
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CONCEPTGUARD_ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:5173",
+    ).split(",")
+    if origin.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 analyzer = CircuitAnalyzer()
@@ -159,13 +169,13 @@ def _detect_misconceptions(req: AnalyzeRequest, result: CircuitResult) -> List[s
 
     if not result.closed_circuit:
         misconceptions.append("open_circuit_confusion")
-    if any(keyword in text for keyword in ["usedup", "consumed", "currentdrops", "currentdecreases", "weakerafter", "lesscurrentafter"]):
+    if any(keyword in text for keyword in ["usedup", "consumed", "currentdrops", "currentdecreases", "weakerafter", "lesscurrentafter", "전류가소모", "전류를소모", "전류가줄어", "전류가감소"]):
         misconceptions.append("current_consumption_misconception")
-    if any(keyword in text for keyword in ["voltageflows", "voltageandcurrent", "voltage=current", "voltageiscurrent"]):
+    if any(keyword in text for keyword in ["voltageflows", "voltageandcurrent", "voltage=current", "voltageiscurrent", "전압이흐른", "전압과전류가같", "전압은전류"]):
         misconceptions.append("voltage_current_confusion")
     if result.topology in {"series", "parallel"}:
-        says_parallel = any(keyword in text for keyword in ["parallel", "sidebyside", "separatepaths", "twopaths", "branches"])
-        says_series = any(keyword in text for keyword in ["series", "oneline", "singlepath", "onepath", "inorder"])
+        says_parallel = any(keyword in text for keyword in ["parallel", "sidebyside", "separatepaths", "twopaths", "branches", "병렬", "여러경로", "분기"])
+        says_series = any(keyword in text for keyword in ["series", "oneline", "singlepath", "onepath", "inorder", "직렬", "한경로", "하나의경로"])
         if result.topology == "series" and says_parallel:
             misconceptions.append("series_parallel_confusion")
         if result.topology == "parallel" and says_series:
@@ -199,19 +209,35 @@ def _risk_signals(req: AnalyzeRequest, result: CircuitResult, misconceptions: Li
 
 
 def _feedback_text(req: AnalyzeRequest, result: CircuitResult, misconceptions: List[str], feedback_mode: str) -> str:
+    korean = (req.locale or "").lower().startswith("ko")
+    if korean:
+        if "open_circuit_confusion" in misconceptions:
+            return "손으로 전류의 경로를 따라가 보세요. 전류가 배터리에서 나와 전구를 지나 반대쪽 단자로 돌아오는 닫힌 경로가 있는지 확인하세요."
+        if "current_consumption_misconception" in misconceptions:
+            return "전구에서 전류가 사라지는지 확인해 봅시다. 하나의 닫힌 경로에서는 전구의 앞과 뒤에 같은 전류가 흐르는지 수치를 비교하세요."
+        if "series_parallel_confusion" in misconceptions:
+            return "전류가 지나갈 수 있는 경로의 수를 세어 보세요. 전구가 한 경로에 차례로 놓였는지, 서로 다른 분기에 놓였는지 확인하세요."
+        if "prediction_observation_mismatch" in misconceptions:
+            return "예측한 밝기와 계산된 밝기가 다릅니다. 저항값과 전류 흐름 속도를 비교한 뒤 예측을 다시 설명해 보세요."
+        if feedback_mode == "minimal_hint":
+            return "좋습니다. 전류 표시가 끊기지 않고 한 바퀴를 완성하는지 마지막으로 확인하세요."
+        if feedback_mode == "check_question":
+            return "이 회로에서 전류가 선택할 수 있는 경로는 몇 개인가요? 전구의 앞과 뒤를 손으로 따라가 보세요."
+        return "전류 흐름과 전구 밝기 분석이 표시되었습니다. 관찰 결과와 자신의 설명을 비교한 뒤 회로를 한 번 수정해 보세요."
+
     if "open_circuit_confusion" in misconceptions:
-        return "Trace the path with your hand: does current leave the battery, pass through the bulb, and return to the battery? Use the blue XR ghost line to make a closed loop."
+        return "Trace the path with your hand: does current leave the battery, pass through the bulb, and return to the battery? Use the XR connection markers to make a closed loop."
     if "current_consumption_misconception" in misconceptions:
         return "Let's check whether current disappears in the bulb. Compare the current values before and after the bulb; in one closed path, the same current should flow through the path."
     if "series_parallel_confusion" in misconceptions:
         return "Count the XR current paths. Are the bulbs on the same path one after another, or are they on separate branches? Separate branches indicate a possible parallel circuit."
     if "prediction_observation_mismatch" in misconceptions:
-        return "The predicted brightness and the simulated brightness do not match. Compare the resistance value and current-arrow speed, then state your prediction again."
+        return "The predicted brightness and the calculated brightness do not match. Compare the resistance value and current-flow speed, then state your prediction again."
     if feedback_mode == "minimal_hint":
-        return "Good. Now check whether the current arrows complete a full loop without any break."
+        return "Good. Now check whether the current indicators complete a full loop without any break."
     if feedback_mode == "check_question":
         return "How many paths can current take in this circuit? Trace the path before and after the bulb with your hand."
-    return "XR current flow and bulb-brightness simulation are now on. Compare your observation with your explanation, then revise the circuit once."
+    return "Current flow and bulb brightness are now displayed. Compare the observation with your explanation, then revise the circuit once."
 
 
 def _electrical_payload(result: CircuitResult) -> Dict[str, Any]:
@@ -281,11 +307,39 @@ def _ghost_actions(result: CircuitResult) -> List[Dict[str, Any]]:
 
 
 def _teacher_summary(req: AnalyzeRequest, result: CircuitResult, misconceptions: List[str], mrr: float) -> Dict[str, Any]:
+    risk_level = "high" if mrr >= 0.75 else "medium" if mrr >= 0.5 else "low"
+    if (req.locale or "").lower().startswith("ko"):
+        topology = {
+            "series": "직렬",
+            "parallel": "병렬",
+            "single_load": "단일 부하",
+            "mixed": "혼합",
+            "open": "열린",
+        }.get(result.topology, result.topology)
+        circuit_state = "닫힌 회로" if result.closed_circuit else "열린 회로"
+        next_action = (
+            "개별 개입 제공"
+            if mrr >= 0.75
+            else "XR에서 다시 구성하도록 요청"
+            if mrr >= 0.5
+            else "다음 미션 진행 가능"
+        )
+        headline = f"{req.mission_id}: {topology} · {circuit_state}"
+    else:
+        next_action = (
+            "Provide individual intervention"
+            if mrr >= 0.75
+            else "Ask for another XR retry"
+            if mrr >= 0.5
+            else "Ready for the next mission"
+        )
+        headline = f"{req.mission_id}: {result.topology}, {'closed' if result.closed_circuit else 'open'} circuit"
+
     return {
-        "risk_level": "high" if mrr >= 0.75 else "medium" if mrr >= 0.5 else "low",
-        "headline": f"{req.mission_id}: {result.topology}, {'closed' if result.closed_circuit else 'open'} circuit",
+        "risk_level": risk_level,
+        "headline": headline,
         "misconception_count": len(misconceptions),
-        "recommended_next_action": "Provide individual intervention" if mrr >= 0.75 else "Ask for another XR retry" if mrr >= 0.5 else "Ready for the next mission",
+        "recommended_next_action": next_action,
     }
 
 

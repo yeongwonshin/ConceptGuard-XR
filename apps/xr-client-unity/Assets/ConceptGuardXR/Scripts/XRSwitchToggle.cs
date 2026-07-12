@@ -1,44 +1,55 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
 namespace ConceptGuardXR
 {
-    [RequireComponent(typeof(XRBaseInteractable))]
     public sealed class XRSwitchToggle : MonoBehaviour
     {
-        [SerializeField] private XRComponentNode switchNode;
-        [SerializeField] private Transform lever;
-        [SerializeField] private Vector3 closedEuler = new Vector3(-25f, 0f, 0f);
-        [SerializeField] private Vector3 openEuler = new Vector3(25f, 0f, 0f);
-        [SerializeField] private CircuitGraphBuilder graphBuilder;
+        private XRComponentNode switchNode;
+        private Transform lever;
+        private CircuitGraphBuilder graphBuilder;
+        private SessionEventLogger eventLogger;
+        private Vector3 closedEuler = new Vector3(0f, 0f, -18f);
+        private Vector3 openEuler = new Vector3(0f, 0f, 24f);
 
-        private XRBaseInteractable interactable;
-
-        private void Awake()
+        public void Configure(
+            XRComponentNode node,
+            Transform leverTransform,
+            CircuitGraphBuilder builder,
+            SessionEventLogger logger)
         {
-            interactable = GetComponent<XRBaseInteractable>();
-            if (switchNode == null) switchNode = GetComponentInParent<XRComponentNode>();
+            switchNode = node;
+            lever = leverTransform;
+            graphBuilder = builder;
+            eventLogger = logger;
+            RefreshVisual();
         }
 
-        private void OnEnable()
+        public void Toggle()
         {
-            interactable.selectEntered.AddListener(OnSelected);
-        }
+            if (switchNode == null)
+            {
+                return;
+            }
 
-        private void OnDisable()
-        {
-            interactable.selectEntered.RemoveListener(OnSelected);
-        }
-
-        private void OnSelected(SelectEnterEventArgs _)
-        {
-            if (switchNode == null) return;
             switchNode.SwitchClosed = !switchNode.SwitchClosed;
-            if (lever != null)
+            RefreshVisual();
+            var eventType = switchNode.SwitchClosed ? "switch_closed" : "switch_opened";
+            if (eventLogger != null)
+            {
+                eventLogger.Log(eventType, $"{{\"component_id\":\"{switchNode.ComponentId}\"}}");
+            }
+            else
+            {
+                graphBuilder?.RecordEvent(eventType);
+            }
+        }
+
+        private void RefreshVisual()
+        {
+            if (lever != null && switchNode != null)
             {
                 lever.localEulerAngles = switchNode.SwitchClosed ? closedEuler : openEuler;
             }
-            graphBuilder?.RecordEvent(switchNode.SwitchClosed ? "switch_closed" : "switch_opened");
         }
     }
 }

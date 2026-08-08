@@ -1,6 +1,6 @@
 # ConceptGuard XR
 
-**An AI-assisted XR science tutor that helps learners recognize and correct circuit misconceptions through hands-on experimentation, verified circuit analysis, and adaptive visual feedback.**
+An AI-assisted XR science tutor that helps learners recognize and correct circuit misconceptions through hands-on experimentation, verified circuit analysis, and adaptive visual feedback.
 
 ConceptGuard XR is an educational system in which learners build electrical circuits by placing and connecting components in an immersive XR laboratory. The system interprets the circuit structure together with the learner's explanation and prediction, then returns misconception-aware coaching, electrical measurements, and animated current-flow visualizations.
 
